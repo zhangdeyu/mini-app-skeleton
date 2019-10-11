@@ -1,39 +1,38 @@
-import api from '../../api/index'
-
-interface IDataType {
-  /** 用户信息 */
-  userInfo: IAnyObject | null
+namespace IndexPage {
+  export interface IDataType {
+    /** 用户信息 */
+    canIUse: boolean
+  }
+  export interface ICustomOption {
+    /** 登录 */
+    bindGetUserInfo(e: any): void
+  }
 }
-interface ICustomOption {
-  /** 登录 */
-  login(): void
-}
 
-Page<IDataType, ICustomOption>({
+
+Page<IndexPage.IDataType, IndexPage.ICustomOption>({
   data: {
-    userInfo: null
-  },
-  login() {
-    const params: Api.login.IParams = {
-      username: 'qingyangkeji',
-      password: '123456'
-    }
-    api.login(params, { showLoading: false }).then(({ data, message }: Api.login.IResponse) => {
-      wx.showToast({
-        icon: 'none',
-        title: message,
-        duration: 1500
-      })
-      wx.setStorageSync('token', data.token)
-      this.setData({
-        userInfo: data.userInfo
-      })
-    }).catch(err => {
-      console.error(err)
-    })
+    canIUse: wx.canIUse('button.open-type.getUserInfo')
   },
 
   onLoad() {
-    this.login()
+    wx.getSetting({
+      success: (res) =>{
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success: (res) => {
+              console.log(res.userInfo)
+              this.setData({
+                userInfo: res.userInfo
+              })
+            }
+          })
+        }
+      }
+    })
+  },
+  bindGetUserInfo (e) {
+    console.log(e.detail.userInfo)
   }
 })
