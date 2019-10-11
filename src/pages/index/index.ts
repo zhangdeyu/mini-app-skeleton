@@ -1,9 +1,9 @@
-namespace IndexPage {
-  export interface IDataType {
+declare namespace IndexPage {
+  interface IDataType {
     /** 用户信息 */
     canIUse: boolean
   }
-  export interface ICustomOption {
+  interface ICustomOption {
     /** 登录 */
     bindGetUserInfo(e: any): void
   }
